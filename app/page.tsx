@@ -25,7 +25,8 @@ export default function HomePage() {
 
       <div>
         <RoomStatus roomName="1047" />
-        <RoomStatus roomName="1202（準備中）" />
+        <RoomStatus roomName="1202" />
+        1202はダミーデータであり、現在準備中です（近日実装予定）
       </div>
     </main>
   );
