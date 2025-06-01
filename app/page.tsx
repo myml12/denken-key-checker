@@ -25,7 +25,7 @@ export default function HomePage() {
 
       <div>
         <RoomStatus roomName="1047" />
-        <RoomStatus roomName="1202" />
+        <RoomStatus roomName="1202（準備中）" />
       </div>
     </main>
   );
