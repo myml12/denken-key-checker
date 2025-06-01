@@ -11,22 +11,24 @@ export default function HomePage() {
       textAlign: 'center',
     }}>
       <h1 style={{
-        fontSize: '2.3rem',
+        fontSize: '2rem',
         fontWeight: '900',
         marginBottom: '1rem',
-        color: '#bb86fc',
-        letterSpacing: 1,
+        color: '#00a7db',
       }}>
-       denken key checker 🔑
+       denken Sensors
       </h1>
-      <p style={{ marginBottom: '2rem', color: '#aaa', fontSize: '1rem' }}>
-        部室の鍵の開閉状況をリアルタイムで確認できます
+      <p style={{ marginBottom: '2rem', color: '#ddd', fontSize: '1rem' }}>
+        部室の鍵と照明の状態を確認できます
       </p>
 
       <div>
         <RoomStatus roomName="1047" />
         <RoomStatus roomName="1202" />
-        1202はダミーデータであり、現在準備中です（近日実装予定）
+        1202はダミーデータであり、現在準備中です（近日設置予定）
+      </div>
+      <div>
+        Webアプリと鍵センサーの不具合は水野まで、照明センサーの不具合は浅海まで
       </div>
     </main>
   );

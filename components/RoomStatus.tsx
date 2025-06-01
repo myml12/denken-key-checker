@@ -11,6 +11,8 @@ interface RoomStatusProps {
 export default function RoomStatus({ roomName }: RoomStatusProps) {
   const [state, setState] = useState<boolean | null>(null);
   const [timestamp, setTimestamp] = useState<number | null>(null);
+  const [lightState, setLightState] = useState<boolean | null>(null);
+  const [lookedAt, setLookedAt] = useState<number | null>(null);
 
   useEffect(() => {
     const roomRef = ref(database, `room/${roomName}`);
@@ -19,6 +21,8 @@ export default function RoomStatus({ roomName }: RoomStatusProps) {
       if (data) {
         setState(data.state === 0);  // 0=解錠なのでtrue
         setTimestamp(data.timestamp);
+        setLightState(data.lightState === 0); //0=消灯なのでtrue
+        setLookedAt(data.lookedAt);
       }
     });
     return () => unsubscribe();
@@ -35,7 +39,7 @@ export default function RoomStatus({ roomName }: RoomStatusProps) {
       <h2 style={styles.title}>{roomName}</h2>
       <p style={{
         ...styles.stateText,
-        color: state === null ? '#aaa' : state ? '#4caf50' : '#e91e63',
+        color: state === null ? '#aaa' : state ? '#89ff89' : '#ff0582',
       }}>
         {state === null
           ? '読み込み中...'
@@ -43,7 +47,18 @@ export default function RoomStatus({ roomName }: RoomStatusProps) {
           ? '🔓 解錠中 OPEN'
           : '🔐 施錠中 CLOSE'}
       </p>
-      <p style={styles.timestamp}>更新日時: {formatTime(timestamp)}</p>
+      <p style={{
+        ...styles.stateText,
+        color: lightState === null ? '#aaa' : lightState ? '#ff0582' : '#89ff89',
+      }}>
+        {lightState === null
+          ? '読み込み中...'
+          : lightState
+          ? '🌃 消灯中 OFF'
+          : '💡 点灯中 ON'}
+      </p>
+      <p style={styles.timestamp}>Key checked at {formatTime(timestamp)}</p>
+      <p style={styles.timestamp}>Light checked at {formatTime(lookedAt)}</p>
     </div>
   );
 }
@@ -52,9 +67,9 @@ const styles = {
   card: {
     backgroundColor: '#121212',
     color: '#ddd',
-    padding: 25,
+    padding: 20,
     borderRadius: 14,
-    width: 300,
+    width: 320,
     margin: '1.5rem auto',
     boxShadow: '0 4px 12px rgba(0,0,0,0.8)',
     fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
@@ -63,9 +78,8 @@ const styles = {
   title: {
     fontSize: '1.8rem',
     fontWeight: '700',
-    marginBottom: 16,
-    letterSpacing: 1.5,
-    color: '#bb86fc',
+    marginBottom: 12,
+    color: '#00a7db',
   },
   stateText: {
     fontSize: '1.2rem',

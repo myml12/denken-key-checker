@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "denken key checker",
-  description: "部室の鍵の状態をリアルタイムで表示します。",
+  description: "部室の鍵と照明の状態をリアルタイムで表示します",
 };
 
 export default function RootLayout({
