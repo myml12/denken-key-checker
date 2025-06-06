@@ -16,7 +16,7 @@ export default function HomePage() {
         marginBottom: '1rem',
         color: '#00a7db',
       }}>
-       denken Sensors
+       denken Monitor
       </h1>
       <p style={{ marginBottom: '2rem', color: '#ddd', fontSize: '1rem' }}>
         部室の鍵と照明の状態を確認できます
