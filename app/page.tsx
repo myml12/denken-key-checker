@@ -25,7 +25,7 @@ export default function HomePage() {
       <div>
         <RoomStatus roomName="1047" />
         <RoomStatus roomName="1202" />
-        1202はダミーデータであり、現在準備中です（近日設置予定）
+        1202の照明センサーはダミーデータであり、現在準備中です（近日設置予定）
       </div>
       <div>
         Webアプリと鍵センサーの不具合は水野まで、照明センサーの不具合は浅海まで
