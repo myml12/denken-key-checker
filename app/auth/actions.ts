@@ -3,7 +3,7 @@
 import { cookies } from "next/headers"
 
 // パスワードを設定（4桁の数字）
-const SITE_PASSWORD = "1202"
+const SITE_PASSWORD = process.env.SITE_PASSWORD
 
 export async function verifyPassword(password: string) {
   // パスワードを検証
