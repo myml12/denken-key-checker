@@ -1,3 +1,4 @@
+'use client'
 import RoomStatus from "@/components/RoomStatus";
 
 export default function HomePage() {
