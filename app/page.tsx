@@ -1,5 +1,6 @@
 'use client'
 import RoomStatus from "@/components/RoomStatus";
+import SensorStatus from "@/components/SensorStatus";
 
 export default function HomePage() {
   return (
@@ -20,13 +21,16 @@ export default function HomePage() {
         denken Monitor
       </h1>
       <p style={{ marginBottom: '2rem', color: '#ddd', fontSize: '1rem' }}>
-        部室の鍵と照明の状態を確認できます
+        部室の鍵と照明、環境センサーのデータを確認できます
       </p>
 
       <div>
         <RoomStatus roomName="1047" />
+        <SensorStatus roomName="1047" />
         <RoomStatus roomName="6433" />
-        Webアプリと鍵センサー/照明センサー(6433)の不具合は水野まで、照明センサー(1047)の不具合は浅海まで
+        <p style={{ marginTop: '2rem', color: '#777', fontSize: '0.9rem' }}>
+          不具合は水野または浅海まで
+        </p>
       </div>
     </main>
   );
