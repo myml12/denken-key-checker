@@ -110,7 +110,7 @@ const styles = {
         color: '#ddd',
         padding: 20,
         borderRadius: 14,
-        width: 380,
+        width: 320,
         margin: '1.5rem auto',
         boxShadow: '0 4px 12px rgba(0,0,0,0.8)',
         fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
