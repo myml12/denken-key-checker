@@ -49,7 +49,8 @@ export function PasswordForm() {
         setError("パスワードが正しくありません")
       }
     } catch (err) {
-      setError("エラーが発生しました。もう一度お試しください。")
+      console.error('パスワード認証エラー:', err);
+      setError(err instanceof Error ? err.message : "エラーが発生しました。もう一度お試しください。")
     } finally {
       setIsLoading(false)
     }
