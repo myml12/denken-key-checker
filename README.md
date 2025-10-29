@@ -22,6 +22,10 @@ NEXT_PUBLIC_FIREBASE_PROJECT_ID=your-project-id
 NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=your-project.appspot.com
 NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=your-sender-id
 NEXT_PUBLIC_FIREBASE_APP_ID=your-app-id
+
+# Firebase Authentication設定（固定アカウント）
+NEXT_PUBLIC_FIREBASE_AUTH_EMAIL=denken@example.com
+NEXT_PUBLIC_FIREBASE_AUTH_PASSWORD=denken
 ```
 
 ### 環境変数の詳細
@@ -32,3 +36,6 @@ NEXT_PUBLIC_FIREBASE_APP_ID=your-app-id
 - **SITE_PASSWORD（必須）**: パスワード認証用のパスワード
 - **Firebase関連（必須）**: Firebase Realtime Databaseに接続するために必要
   - Firebase Console > Project Settings > General > Your apps から取得
+- **NEXT_PUBLIC_FIREBASE_AUTH_EMAIL（必須）**: Firebase Authenticationで使用する固定のメールアドレス
+  - Firebase Console > Authentication > Users で事前に作成しておく必要があります
+- **NEXT_PUBLIC_FIREBASE_AUTH_PASSWORD（必須）**: 上記メールアドレスに対応するパスワード
