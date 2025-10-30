@@ -40,7 +40,7 @@ async function verifyAndRefreshJWT(token: string | undefined): Promise<{ isValid
       })
         .setProtectedHeader({ alg: "HS256" })
         .setIssuedAt()
-        .setExpirationTime("7d")
+        .setExpirationTime("30d")
         .sign(secret)
 
       return { isValid: true, newToken }
@@ -66,7 +66,7 @@ export async function middleware(request: NextRequest) {
     response.cookies.set("site-auth", newToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      maxAge: 60 * 60 * 24 * 7, // 1週間
+      maxAge: 60 * 60 * 24 * 30, // 30日
       path: "/",
       sameSite: "strict",
     })

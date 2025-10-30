@@ -3,8 +3,14 @@
 import { cookies } from "next/headers"
 import { SignJWT } from "jose"
 
-// パスワードを設定（4桁の数字）
-const SITE_PASSWORD = process.env.SITE_PASSWORD
+// パスワードを取得（実行時に評価することで環境変数の変更に追従）
+function getSitePassword(): string {
+  const pw = process.env.SITE_PASSWORD
+  if (!pw) {
+    throw new Error("SITE_PASSWORD environment variable is not set. Please set it in the deployment environment")
+  }
+  return pw
+}
 
 // シークレットキーを取得
 function getSecret(): string {
@@ -15,7 +21,7 @@ function getSecret(): string {
   return secret
 }
 
-// JWTトークンを生成する関数
+// JWTトークンを生成する関数（30日有効）
 async function generateAuthToken(): Promise<string> {
   const secret = new TextEncoder().encode(getSecret())
 
@@ -28,29 +34,37 @@ async function generateAuthToken(): Promise<string> {
   })
     .setProtectedHeader({ alg: "HS256" })
     .setIssuedAt()
-    .setExpirationTime("7d") // 7日間有効
+    .setExpirationTime("30d") // 30日間有効
     .sign(secret)
 
   return token
 }
 
 export async function verifyPassword(password: string) {
-  // パスワードを検証
-  if (password === SITE_PASSWORD) {
-    // 認証成功時、JWTトークンを生成してクッキーに設定
-    const authToken = await generateAuthToken()
+  try {
+    const SITE_PASSWORD = getSitePassword()
 
-    const cookieStore = await cookies()
-    cookieStore.set("site-auth", authToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      maxAge: 60 * 60 * 24 * 7, // 1週間
-      path: "/",
-      sameSite: "strict", // CSRF対策
-    })
+    // パスワードを検証
+    if (password === SITE_PASSWORD) {
+      // 認証成功時、JWTトークンを生成してクッキーに設定
+      const authToken = await generateAuthToken()
 
-    return { success: true }
+      const cookieStore = await cookies()
+      cookieStore.set("site-auth", authToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        maxAge: 60 * 60 * 24 * 30, // 30日
+        path: "/",
+        sameSite: "strict", // CSRF対策
+      })
+
+      return { success: true }
+    }
+
+    return { success: false }
+  } catch (err) {
+    // エラーが発生しても常にオブジェクトを返す
+    const message = err instanceof Error ? err.message : "Unknown error"
+    return { success: false, error: message }
   }
-
-  return { success: false }
 }
