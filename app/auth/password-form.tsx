@@ -42,11 +42,20 @@ export function PasswordForm() {
 
     try {
       const result = await verifyPassword(password)
+      
+      // resultがundefinedの場合の安全な処理
+      if (!result) {
+        console.error('サーバーアクションがundefinedを返しました');
+        setError("エラーが発生しました。もう一度お試しください。")
+        return
+      }
+      
       if (result.success) {
         router.push("/")
         router.refresh()
       } else {
-        setError("パスワードが正しくありません")
+        // エラーメッセージがある場合はそれを表示、なければデフォルトメッセージ
+        setError(result.error || "パスワードが正しくありません")
       }
     } catch (err) {
       console.error('パスワード認証エラー:', err);

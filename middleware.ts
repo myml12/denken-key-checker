@@ -79,7 +79,8 @@ export async function middleware(request: NextRequest) {
   }
 
   // 認証済みでパスワードページにアクセスした場合はホームにリダイレクト
-  if (isValid && request.nextUrl.pathname.startsWith("/auth")) {
+  // ただし、POSTリクエスト（サーバーアクション）の場合はリダイレクトしない
+  if (isValid && request.nextUrl.pathname.startsWith("/auth") && request.method !== "POST") {
     return NextResponse.redirect(new URL("/", request.url))
   }
 

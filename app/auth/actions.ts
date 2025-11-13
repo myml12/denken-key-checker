@@ -44,24 +44,24 @@ export async function verifyPassword(password: string) {
   try {
     const SITE_PASSWORD = getSitePassword()
 
-    // パスワードを検証
-    if (password === SITE_PASSWORD) {
-      // 認証成功時、JWTトークンを生成してクッキーに設定
-      const authToken = await generateAuthToken()
+  // パスワードを検証
+  if (password === SITE_PASSWORD) {
+    // 認証成功時、JWTトークンを生成してクッキーに設定
+    const authToken = await generateAuthToken()
 
-      const cookieStore = await cookies()
-      cookieStore.set("site-auth", authToken, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
+    const cookieStore = await cookies()
+    cookieStore.set("site-auth", authToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
         maxAge: 60 * 60 * 24 * 30, // 30日
-        path: "/",
-        sameSite: "strict", // CSRF対策
-      })
+      path: "/",
+      sameSite: "strict", // CSRF対策
+    })
 
-      return { success: true }
-    }
+    return { success: true }
+  }
 
-    return { success: false }
+  return { success: false }
   } catch (err) {
     // エラーが発生しても常にオブジェクトを返す
     const message = err instanceof Error ? err.message : "Unknown error"
