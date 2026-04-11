@@ -20,20 +20,10 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   title: "denken key checker",
   description: "部室の鍵と照明の状態をリアルタイムで表示します",
-  manifest: "/manifest.json",
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
-    title: "Key Check",
-  },
-  icons: {
-    icon: [
-      { url: "/web-app-manifest-192x192.png", sizes: "192x192", type: "image/png" },
-      { url: "/web-app-manifest-512x512.png", sizes: "512x512", type: "image/png" },
-    ],
-    apple: [
-      { url: "/apple-icon.png", sizes: "180x180", type: "image/png" },
-    ],
+    title: "denken",
   },
 };
 
@@ -44,10 +34,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-    <meta name="apple-mobile-web-app-title" content="Key Check" />
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         {children}
       </body>
     </html>

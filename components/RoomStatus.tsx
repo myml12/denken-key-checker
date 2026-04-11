@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { ref, onValue, set } from 'firebase/database';
 import { database } from '../lib/firebase';
+import RoomComments from './RoomComments';
 
 interface RoomStatusProps {
   roomName: string;
@@ -140,6 +141,7 @@ export default function RoomStatus({ roomName }: RoomStatusProps) {
         </p>
         <p className="dm-ts">Key checked at {formatTime(timestamp)}</p>
         <p className="dm-ts">Light checked at {formatTime(lookedAt)}</p>
+        <RoomComments roomName={roomName} />
       </div>
 
       {dialog.show ? (
