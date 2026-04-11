@@ -1,16 +1,324 @@
-/* styles/globals.css */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
-    Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-  background-color: #121212;
-  color: #f5f5f5;
+/*
+ * 状態・ボタン: 緑 / 赤
+ * 見出し・教室番号・IAQセクション見出し: アクセント青（--dm-accent）
+ */
+:root {
+  --dm-accent: #0284c7;
+
+  --dm-ok: #10b981;
+  --dm-ok-hover: #059669;
+  --dm-alert: #ef4444;
+  --dm-alert-hover: #dc2626;
+
+  --dm-page: #f5f5f7;
+  --dm-surface: #ffffff;
+  --dm-border: #e5e7eb;
+  --dm-border-strong: #e2e8f0;
+  --dm-text: #1d1d1f;
+  --dm-text-secondary: #5c5c5c;
+  --dm-muted: #6b7280;
+  --dm-subtle: #86868b;
+  --dm-surface-muted: #f3f4f6;
+  --dm-surface-muted-hover: #e5e7eb;
+  --dm-on-muted: #374151;
+
+  --dm-shadow-card: 0 1px 3px rgba(0, 0, 0, 0.06), 0 4px 12px rgba(0, 0, 0, 0.04);
+  --dm-shadow-dialog: 0 10px 40px rgba(0, 0, 0, 0.12);
+  --dm-overlay: rgba(0, 0, 0, 0.45);
 }
 
-h2 {
-  color: #ffffff;
+@layer base {
+  /* オーバースクロール時もページ地色にそろえる（theme-color と一致させる） */
+  html {
+    background-color: var(--dm-page);
+  }
+
+  body {
+    margin: 0;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu,
+      Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+    background-color: var(--dm-page);
+    color: var(--dm-text);
+  }
+
+  h2 {
+    color: var(--dm-text);
+  }
+}
+
+@layer components {
+  .dm-main {
+    min-height: 100vh;
+    background-color: var(--dm-page);
+    color: var(--dm-text);
+    padding: 2rem;
+    font-family: "Segoe UI", system-ui, sans-serif;
+    text-align: center;
+  }
+
+  .dm-h1 {
+    margin: 0 0 1rem;
+    font-size: 2rem;
+    font-weight: 900;
+    color: var(--dm-accent);
+  }
+
+  .dm-lede {
+    margin: 0 0 2rem;
+    font-size: 1rem;
+    color: var(--dm-text-secondary);
+  }
+
+  .dm-footerNote {
+    margin: 2rem 0 0;
+    font-size: 0.9rem;
+    color: var(--dm-subtle);
+  }
+
+  .dm-card {
+    width: 320px;
+    max-width: 100%;
+    margin: 1.5rem auto;
+    padding: 1.25rem;
+    border-radius: 14px;
+    background: var(--dm-surface);
+    color: var(--dm-text);
+    border: 1px solid var(--dm-border);
+    box-shadow: var(--dm-shadow-card);
+    font-family: "Segoe UI", system-ui, sans-serif;
+    text-align: center;
+  }
+
+  .dm-cardTitle {
+    margin: 0 0 12px;
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--dm-accent);
+  }
+
+  .dm-cardTitleSuffix {
+    margin-left: 6px;
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: var(--dm-muted);
+  }
+
+  .dm-stateLine {
+    margin: 0 0 12px;
+    font-size: 1.2rem;
+    font-weight: 600;
+  }
+
+  .dm-stateLine--clickable {
+    cursor: pointer;
+    user-select: none;
+    transition: opacity 0.2s;
+  }
+
+  .dm-stateLine--ok {
+    color: var(--dm-ok);
+  }
+
+  .dm-stateLine--alert {
+    color: var(--dm-alert);
+  }
+
+  .dm-stateLine--muted {
+    color: var(--dm-muted);
+  }
+
+  .dm-ts {
+    margin: 0;
+    font-size: 0.9rem;
+    color: var(--dm-muted);
+  }
+
+  .dm-ts--gap {
+    margin-top: 12px;
+  }
+
+  .dm-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--dm-border);
+  }
+
+  .dm-rowLabel {
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: var(--dm-muted);
+  }
+
+  .dm-rowValue {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--dm-text);
+  }
+
+  .dm-iaqValue {
+    font-weight: 700;
+  }
+
+  .dm-legend {
+    margin-top: 16px;
+    padding: 12px;
+    border-radius: 8px;
+    text-align: left;
+    background: var(--dm-surface-muted);
+    border: 1px solid var(--dm-border-strong);
+  }
+
+  .dm-legendTitle {
+    margin: 0 0 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--dm-accent);
+  }
+
+  .dm-legendRow {
+    display: flex;
+    align-items: center;
+    margin-bottom: 4px;
+  }
+
+  .dm-legendRow:last-child {
+    margin-bottom: 0;
+  }
+
+  .dm-legendDot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    margin-right: 8px;
+    flex-shrink: 0;
+  }
+
+  .dm-legendText {
+    font-size: 0.85rem;
+    color: var(--dm-on-muted);
+  }
+
+  .dm-loading {
+    margin: 0;
+    font-size: 1.1rem;
+    color: var(--dm-muted);
+  }
+
+  .dm-dialogOverlay {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--dm-overlay);
+  }
+
+  .dm-dialog {
+    width: 90%;
+    max-width: 400px;
+    padding: 24px;
+    border-radius: 14px;
+    background: var(--dm-surface);
+    color: var(--dm-text);
+    border: 1px solid var(--dm-border);
+    box-shadow: var(--dm-shadow-dialog);
+    font-family: "Segoe UI", system-ui, sans-serif;
+  }
+
+  .dm-dialogTitle {
+    margin: 0 0 24px;
+    font-size: 1.5rem;
+    font-weight: 700;
+    text-align: center;
+    color: var(--dm-accent);
+  }
+
+  .dm-dialogActions {
+    display: flex;
+    gap: 12px;
+    margin-top: 20px;
+  }
+
+  .dm-btn {
+    flex: 1;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    transition: background-color 0.2s;
+  }
+
+  .dm-btn--cancel {
+    background: var(--dm-surface-muted);
+    color: var(--dm-on-muted);
+    border: 1px solid var(--dm-border-strong);
+  }
+
+  .dm-btn--cancel:hover {
+    background: var(--dm-surface-muted-hover);
+  }
+
+  .dm-btn--ok {
+    background: var(--dm-ok);
+    color: #fff;
+  }
+
+  .dm-btn--ok:hover {
+    background: var(--dm-ok-hover);
+  }
+
+  .dm-screen {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--dm-page);
+    font-family: system-ui, sans-serif;
+  }
+
+  .dm-screen--loading {
+    color: var(--dm-muted);
+  }
+
+  .dm-screen--error {
+    flex-direction: column;
+    padding: 2rem;
+    text-align: center;
+    color: var(--dm-alert);
+  }
+
+  .dm-screenErrorTitle {
+    margin: 0 0 1rem;
+    font-size: 1.5rem;
+    color: var(--dm-text);
+  }
+
+  .dm-screenErrorBody {
+    margin: 0 0 1rem;
+    color: var(--dm-alert);
+  }
+
+  .dm-screenErrorHint {
+    margin: 1rem 0 0;
+    font-size: 0.9rem;
+    color: var(--dm-muted);
+  }
+
+  .dm-text-brand {
+    color: var(--dm-accent);
+  }
+
+  .dm-errorBox {
+    border: 1px solid var(--dm-border);
+    background: var(--dm-surface-muted);
+    color: var(--dm-alert);
+  }
 }

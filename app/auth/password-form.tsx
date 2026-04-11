@@ -8,7 +8,6 @@ import { verifyPassword } from "@/app/auth/actions"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 
-// シンプルなアラートアイコンコンポーネント
 function AlertIcon() {
   return (
     <svg
@@ -42,19 +41,17 @@ export function PasswordForm() {
 
     try {
       const result = await verifyPassword(password)
-      
-      // resultがundefinedの場合の安全な処理
+
       if (!result) {
         console.error('サーバーアクションがundefinedを返しました');
         setError("エラーが発生しました。もう一度お試しください。")
         return
       }
-      
+
       if (result.success) {
         router.push("/")
         router.refresh()
       } else {
-        // エラーメッセージがある場合はそれを表示、なければデフォルトメッセージ
         setError(result.error || "パスワードが正しくありません")
       }
     } catch (err) {
@@ -80,7 +77,7 @@ export function PasswordForm() {
       </div>
 
       {error && (
-        <div className="flex items-center gap-2 p-3 text-sm text-red-600 bg-red-50 rounded">
+        <div className="dm-errorBox flex items-center gap-2 rounded p-3 text-sm">
           <AlertIcon />
           <p>{error}</p>
         </div>

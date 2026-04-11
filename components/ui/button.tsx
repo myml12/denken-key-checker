@@ -12,7 +12,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         ${disabled ? "opacity-50 cursor-not-allowed" : ""} 
         ${
           variant === "default"
-            ? "bg-blue-600 text-white hover:bg-blue-700"
+            ? "bg-[var(--dm-ok)] text-white hover:bg-[var(--dm-ok-hover)]"
             : variant === "outline"
               ? "border border-gray-300 bg-transparent hover:bg-gray-100"
               : "bg-transparent hover:bg-gray-100"

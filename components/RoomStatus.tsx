@@ -14,7 +14,6 @@ interface DialogState {
   newState: string;
 }
 
-/** 手動で鍵・照明状態を切り替え可能な部屋（Firebase: room/<name>） */
 const MANUAL_EDIT_ROOMS = new Set(['6433', '4521']);
 
 export default function RoomStatus({ roomName }: RoomStatusProps) {
@@ -27,7 +26,7 @@ export default function RoomStatus({ roomName }: RoomStatusProps) {
     type: null,
     newState: '',
   });
-  const [rawData, setRawData] = useState<any>(null);
+  const [rawData, setRawData] = useState<Record<string, unknown> | null>(null);
 
   const isEditable = MANUAL_EDIT_ROOMS.has(roomName);
 
@@ -37,9 +36,9 @@ export default function RoomStatus({ roomName }: RoomStatusProps) {
       const data = snapshot.val();
       if (data) {
         setRawData(data);
-        setState(data.state === 0);  // 0=解錠なのでtrue
+        setState(data.state === 0);
         setTimestamp(data.timestamp);
-        setLightState(data.lightState === 0); //0=消灯なのでtrue
+        setLightState(data.lightState === 0);
         setLookedAt(data.lookedAt);
       }
     });
@@ -48,8 +47,7 @@ export default function RoomStatus({ roomName }: RoomStatusProps) {
 
   const formatTime = (ts: number | null) => {
     if (!ts) return '';
-    const d = new Date(ts);
-    return d.toLocaleString();
+    return new Date(ts).toLocaleString();
   };
 
   const handleToggle = (type: 'lock' | 'light') => {
@@ -57,18 +55,10 @@ export default function RoomStatus({ roomName }: RoomStatusProps) {
 
     if (type === 'lock') {
       const newLockState = rawData.state === 0 ? '施錠中' : '解錠中';
-      setDialog({
-        show: true,
-        type: 'lock',
-        newState: newLockState,
-      });
+      setDialog({ show: true, type: 'lock', newState: newLockState });
     } else {
       const newLightState = rawData.lightState === 0 ? '点灯中' : '消灯中';
-      setDialog({
-        show: true,
-        type: 'light',
-        newState: newLightState,
-      });
+      setDialog({ show: true, type: 'light', newState: newLightState });
     }
   };
 
@@ -78,17 +68,13 @@ export default function RoomStatus({ roomName }: RoomStatusProps) {
       return;
     }
 
-    // 即座にダイアログを閉じる
     const dialogType = dialog.type;
-    const currentRawData = rawData;
+    const currentRawData = { ...rawData };
     setDialog({ show: false, type: null, newState: '' });
 
-    // 非同期で書き込み処理を実行（リスナーが自動的に反映するので、表示は変更しない）
     (async () => {
       const roomRef = ref(database, `room/${roomName}`);
-      const updates: any = {
-        ...currentRawData,
-      };
+      const updates: Record<string, unknown> = { ...currentRawData };
 
       if (dialogType === 'lock') {
         updates.state = currentRawData.state === 0 ? 1 : 0;
@@ -111,16 +97,29 @@ export default function RoomStatus({ roomName }: RoomStatusProps) {
     setDialog({ show: false, type: null, newState: '' });
   };
 
+  const lockClass =
+    state === null
+      ? 'dm-stateLine--muted'
+      : state
+        ? 'dm-stateLine--ok'
+        : 'dm-stateLine--alert';
+
+  const lightClass =
+    lightState === null
+      ? 'dm-stateLine--muted'
+      : lightState
+        ? 'dm-stateLine--ok'
+        : 'dm-stateLine--alert';
+
   return (
     <>
-      <div style={styles.card}>
-        <h2 style={styles.title}>{roomName}</h2>
+      <div className="dm-card">
+        <h2 className="dm-cardTitle">
+          {roomName}
+          {isEditable ? <span className="dm-cardTitleSuffix">（手動）</span> : null}
+        </h2>
         <p
-          style={{
-            ...styles.stateText,
-            color: state === null ? '#aaa' : state ? '#89ff89' : '#ff0582',
-            ...(isEditable ? styles.clickable : {}),
-          }}
+          className={`dm-stateLine ${lockClass}${isEditable ? ' dm-stateLine--clickable' : ''}`}
           onClick={() => isEditable && state !== null && handleToggle('lock')}
         >
           {state === null
@@ -130,11 +129,7 @@ export default function RoomStatus({ roomName }: RoomStatusProps) {
               : '🔐 施錠中 CLOSE'}
         </p>
         <p
-          style={{
-            ...styles.stateText,
-            color: lightState === null ? '#aaa' : lightState ? '#ff0582' : '#89ff89',
-            ...(isEditable ? styles.clickable : {}),
-          }}
+          className={`dm-stateLine ${lightClass}${isEditable ? ' dm-stateLine--clickable' : ''}`}
           onClick={() => isEditable && lightState !== null && handleToggle('light')}
         >
           {lightState === null
@@ -143,127 +138,25 @@ export default function RoomStatus({ roomName }: RoomStatusProps) {
               ? '🌃 消灯中 OFF'
               : '💡 点灯中 ON'}
         </p>
-        <p style={styles.timestamp}>Key checked at {formatTime(timestamp)}</p>
-        <p style={styles.timestamp}>Light checked at {formatTime(lookedAt)}</p>
+        <p className="dm-ts">Key checked at {formatTime(timestamp)}</p>
+        <p className="dm-ts">Light checked at {formatTime(lookedAt)}</p>
       </div>
 
-      {dialog.show && (
-        <div style={styles.overlay} onClick={handleCancel}>
-          <div style={styles.dialog} onClick={(e) => e.stopPropagation()}>
-            <h3 style={styles.dialogTitle}>{dialog.newState}に変更しますか？</h3>
-            <div style={styles.dialogButtons}>
-              <button
-                style={styles.cancelButton}
-                onClick={handleCancel}
-                onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#444'; }}
-                onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = '#333'; }}
-              >
+      {dialog.show ? (
+        <div className="dm-dialogOverlay" onClick={handleCancel} role="presentation">
+          <div className="dm-dialog" onClick={(e) => e.stopPropagation()} role="dialog">
+            <h3 className="dm-dialogTitle">{dialog.newState}に変更しますか？</h3>
+            <div className="dm-dialogActions">
+              <button type="button" className="dm-btn dm-btn--cancel" onClick={handleCancel}>
                 キャンセル
               </button>
-              <button
-                style={styles.confirmButton}
-                onClick={handleConfirm}
-                onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#00c5f5'; }}
-                onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = '#00a7db'; }}
-              >
+              <button type="button" className="dm-btn dm-btn--ok" onClick={handleConfirm}>
                 OK
               </button>
             </div>
           </div>
         </div>
-      )}
+      ) : null}
     </>
   );
 }
-
-const styles = {
-  card: {
-    backgroundColor: '#121212',
-    color: '#ddd',
-    padding: 20,
-    borderRadius: 14,
-    width: 320,
-    margin: '1.5rem auto',
-    boxShadow: '0 4px 12px rgba(0,0,0,0.8)',
-    fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
-    textAlign: 'center' as const,
-  },
-  title: {
-    fontSize: '1.8rem',
-    fontWeight: '700',
-    marginBottom: 12,
-    color: '#00a7db',
-  },
-  stateText: {
-    fontSize: '1.2rem',
-    fontWeight: '600',
-    marginBottom: 12,
-  },
-  clickable: {
-    cursor: 'pointer',
-    userSelect: 'none' as const,
-    transition: 'opacity 0.2s',
-  },
-  timestamp: {
-    fontSize: '0.9rem',
-    color: '#777',
-  },
-  overlay: {
-    position: 'fixed' as const,
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: 'rgba(0, 0, 0, 0.7)',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    zIndex: 1000,
-  },
-  dialog: {
-    backgroundColor: '#1e1e1e',
-    color: '#ddd',
-    padding: 24,
-    borderRadius: 14,
-    width: '90%',
-    maxWidth: 400,
-    boxShadow: '0 8px 24px rgba(0,0,0,0.9)',
-    fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
-  },
-  dialogTitle: {
-    fontSize: '1.5rem',
-    fontWeight: '700',
-    marginBottom: 24,
-    color: '#00a7db',
-    textAlign: 'center' as const,
-  },
-  dialogButtons: {
-    display: 'flex',
-    gap: 12,
-    marginTop: 20,
-  },
-  cancelButton: {
-    flex: 1,
-    padding: '12px 24px',
-    backgroundColor: '#333',
-    color: '#ddd',
-    border: 'none',
-    borderRadius: 8,
-    fontSize: '1rem',
-    fontWeight: '600',
-    cursor: 'pointer',
-    transition: 'background-color 0.2s',
-  },
-  confirmButton: {
-    flex: 1,
-    padding: '12px 24px',
-    backgroundColor: '#00a7db',
-    color: '#fff',
-    border: 'none',
-    borderRadius: 8,
-    fontSize: '1rem',
-    fontWeight: '600',
-    cursor: 'pointer',
-    transition: 'background-color 0.2s',
-  },
-};

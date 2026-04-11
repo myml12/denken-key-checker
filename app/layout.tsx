@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
@@ -11,6 +11,11 @@ const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
 });
+
+/** ブラウザ UI / オーバースクロールは地色に。見出しのアクセント青とは別 */
+export const viewport: Viewport = {
+  themeColor: "#f5f5f7",
+};
 
 export const metadata: Metadata = {
   title: "denken key checker",
