@@ -108,8 +108,8 @@ export default function RoomStatus({ roomName }: RoomStatusProps) {
     lightState === null
       ? 'dm-stateLine--muted'
       : lightState
-        ? 'dm-stateLine--ok'
-        : 'dm-stateLine--alert';
+        ? 'dm-stateLine--alert'
+        : 'dm-stateLine--ok';
 
   return (
     <>

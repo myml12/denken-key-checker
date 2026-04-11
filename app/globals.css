@@ -13,6 +13,8 @@
   --dm-ok-hover: #059669;
   --dm-alert: #ef4444;
   --dm-alert-hover: #dc2626;
+  /* 施錠中・消灯中 */
+  --dm-state-alert: #dc143c;
 
   --dm-page: #f5f5f7;
   --dm-surface: #ffffff;
@@ -124,7 +126,7 @@
   }
 
   .dm-stateLine--alert {
-    color: var(--dm-alert);
+    color: var(--dm-state-alert);
   }
 
   .dm-stateLine--muted {
