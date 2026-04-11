@@ -14,6 +14,9 @@ interface DialogState {
   newState: string;
 }
 
+/** 手動で鍵・照明状態を切り替え可能な部屋（Firebase: room/<name>） */
+const MANUAL_EDIT_ROOMS = new Set(['6433', '4521']);
+
 export default function RoomStatus({ roomName }: RoomStatusProps) {
   const [state, setState] = useState<boolean | null>(null);
   const [timestamp, setTimestamp] = useState<number | null>(null);
@@ -26,7 +29,7 @@ export default function RoomStatus({ roomName }: RoomStatusProps) {
   });
   const [rawData, setRawData] = useState<any>(null);
 
-  const isEditable = roomName === '6433';
+  const isEditable = MANUAL_EDIT_ROOMS.has(roomName);
 
   useEffect(() => {
     const roomRef = ref(database, `room/${roomName}`);

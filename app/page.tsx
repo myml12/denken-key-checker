@@ -27,9 +27,12 @@ export default function HomePage() {
         </p>
 
         <div>
+          <h2 style={campusHeadingStyle}>後楽園キャンパス</h2>
           <RoomStatus roomName="1047" />
           <SensorStatus roomName="1047" />
           <RoomStatus roomName="6433" />
+          <h2 style={{ ...campusHeadingStyle, marginTop: '2.25rem' }}>多摩キャンパス</h2>
+          <RoomStatus roomName="4521" />
           <p style={{ marginTop: '2rem', color: '#777', fontSize: '0.9rem' }}>
             不具合は水野または浅海まで
           </p>
@@ -38,3 +41,12 @@ export default function HomePage() {
     </FirebaseAuthProvider>
   );
 }
+
+const campusHeadingStyle = {
+  fontSize: '1.05rem',
+  fontWeight: 600 as const,
+  color: '#888',
+  marginBottom: '0.35rem',
+  marginTop: 0,
+  letterSpacing: '0.02em',
+};
