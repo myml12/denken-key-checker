@@ -8,7 +8,6 @@ import PushNotificationInitializer from '@/components/PushNotificationInitialize
 export default function HomePage() {
   return (
     <FirebaseAuthProvider>
-      <PushNotificationInitializer />
       <main className="dm-main">
         <h1 className="dm-h1">denken Monitor</h1>
         <p className="dm-lede">部室の鍵と照明、環境センサーのデータを確認できます</p>
@@ -21,6 +20,7 @@ export default function HomePage() {
           <p className="dm-footerNote">不具合の報告は水野/浅海まで</p>
         </div>
       </main>
+      <PushNotificationInitializer />
     </FirebaseAuthProvider>
   );
 }
