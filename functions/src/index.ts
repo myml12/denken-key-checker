@@ -94,7 +94,7 @@ function buildNotificationPayloads(roomId: string, before: RoomRecord, after: Ro
 
   if (beforeLock !== null && afterLock !== null && beforeLock !== afterLock) {
     const title =
-      afterLock === 0
+      afterLock === 1
         ? `${roomId}号室が施錠されました🔐`
         : `${roomId}号室が解錠されました🔓`;
     payloads.push(basePayload(roomId, "lock", title));
@@ -102,7 +102,7 @@ function buildNotificationPayloads(roomId: string, before: RoomRecord, after: Ro
 
   if (beforeLight !== null && afterLight !== null && beforeLight !== afterLight) {
     const title =
-      afterLight === 0
+      afterLight === 1
         ? `${roomId}号室の照明が点灯しました💡`
         : `${roomId}号室の照明が消灯しました🌃`;
     payloads.push(basePayload(roomId, "light", title));
