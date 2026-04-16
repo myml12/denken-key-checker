@@ -54,6 +54,13 @@ async function verifyAndRefreshJWT(token: string | undefined): Promise<{ isValid
 }
 
 export async function middleware(request: NextRequest) {
+  const pathname = request.nextUrl.pathname
+
+  // Service Worker は未認証でも取得できないとPush初期化が失敗する
+  if (pathname === "/firebase-messaging-sw.js") {
+    return NextResponse.next()
+  }
+
   // クッキーから認証トークンを取得
   const authToken = request.cookies.get("site-auth")?.value
 
@@ -74,13 +81,13 @@ export async function middleware(request: NextRequest) {
   }
 
   // 認証されていない場合は、パスワード入力ページにリダイレクト
-  if (!isValid && !request.nextUrl.pathname.startsWith("/auth")) {
+  if (!isValid && !pathname.startsWith("/auth")) {
     return NextResponse.redirect(new URL("/auth", request.url))
   }
 
   // 認証済みでパスワードページにアクセスした場合はホームにリダイレクト
   // ただし、POSTリクエスト（サーバーアクション）の場合はリダイレクトしない
-  if (isValid && request.nextUrl.pathname.startsWith("/auth") && request.method !== "POST") {
+  if (isValid && pathname.startsWith("/auth") && request.method !== "POST") {
     return NextResponse.redirect(new URL("/", request.url))
   }
 
