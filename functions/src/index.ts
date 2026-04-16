@@ -12,6 +12,7 @@ const COMMENT_KEYS = ["comment1", "comment2", "comment3"] as const;
 type PushPayload = {
   notification: { title: string; body: string };
   webpush: {
+    headers: { Urgency: string; TTL: string };
     fcmOptions: { link: string };
     notification: { icon: string; badge: string };
   };
@@ -67,10 +68,14 @@ async function removeTokens(tokens: string[]): Promise<void> {
   await getDatabase().ref().update(updates);
 }
 
-function basePayload(roomId: string, eventType: string, title: string, body = ""): PushPayload {
+function basePayload(roomId: string, eventType: string, title: string, body = "\u200B"): PushPayload {
   return {
     notification: { title, body },
     webpush: {
+      headers: {
+        Urgency: "high",
+        TTL: "2419200",
+      },
       fcmOptions: { link: "/" },
       notification: {
         icon: "/web-app-manifest-192x192.png",
