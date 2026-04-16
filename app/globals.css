@@ -507,4 +507,30 @@
     background: var(--dm-surface-muted);
     color: var(--dm-alert);
   }
+
+  .dm-pushNotice {
+    margin: 0 auto 16px;
+    max-width: 860px;
+    padding: 12px 14px;
+    border-radius: 10px;
+    border: 1px solid var(--dm-border);
+    background: var(--dm-surface);
+    color: var(--dm-text);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .dm-pushNoticeText {
+    margin: 0;
+    font-size: 0.95rem;
+    color: var(--dm-muted);
+  }
+
+  .dm-pushNoticeBtn {
+    flex: 0 0 auto;
+    padding: 8px 12px;
+    font-size: 0.9rem;
+  }
 }
