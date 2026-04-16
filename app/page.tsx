@@ -3,10 +3,12 @@
 import RoomStatus from '@/components/RoomStatus';
 import SensorStatus from '@/components/SensorStatus';
 import FirebaseAuthProvider from '@/components/FirebaseAuthProvider';
+import PushNotificationInitializer from '@/components/PushNotificationInitializer';
 
 export default function HomePage() {
   return (
     <FirebaseAuthProvider>
+      <PushNotificationInitializer />
       <main className="dm-main">
         <h1 className="dm-h1">denken Monitor</h1>
         <p className="dm-lede">部室の鍵と照明、環境センサーのデータを確認できます</p>

@@ -22,6 +22,7 @@ NEXT_PUBLIC_FIREBASE_PROJECT_ID=your-project-id
 NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=your-project.appspot.com
 NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=your-sender-id
 NEXT_PUBLIC_FIREBASE_APP_ID=your-app-id
+NEXT_PUBLIC_FIREBASE_VAPID_KEY=your-web-push-vapid-key
 
 # Firebase Authentication設定（固定アカウント）
 NEXT_PUBLIC_FIREBASE_AUTH_EMAIL=denken@example.com
@@ -39,3 +40,18 @@ NEXT_PUBLIC_FIREBASE_AUTH_PASSWORD=denken
 - **NEXT_PUBLIC_FIREBASE_AUTH_EMAIL（必須）**: Firebase Authenticationで使用する固定のメールアドレス
   - Firebase Console > Authentication > Users で事前に作成しておく必要があります
 - **NEXT_PUBLIC_FIREBASE_AUTH_PASSWORD（必須）**: 上記メールアドレスに対応するパスワード
+
+## Web Push通知の有効化
+
+1. Firebase Console で Cloud Messaging を有効化し、Web Push 証明書（VAPID）を発行
+2. `NEXT_PUBLIC_FIREBASE_VAPID_KEY` に公開鍵を設定
+3. Firebase Functions をデプロイ
+
+```bash
+cd functions
+npm install
+npm run build
+firebase deploy --only functions
+```
+
+`room/{roomId}` の `state`（鍵）/`lightState`（照明）/`comment1..3`（コメント）が変化すると、購読中デバイス全体に通知が送信されます。
