@@ -204,11 +204,8 @@
     font-size: 0.78rem;
     line-height: 1.35;
     color: var(--dm-text-secondary);
-    overflow: hidden;
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 2;
     word-break: break-word;
+    overflow-wrap: anywhere;
   }
 
   .dm-commentsPreview .dm-commentsTime {
