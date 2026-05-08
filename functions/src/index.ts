@@ -6,8 +6,6 @@ import { logger } from "firebase-functions";
 
 initializeApp();
 
-type RoomRecord = Record<string, unknown>;
-
 const COMMENT_KEYS = ["comment1", "comment2", "comment3"] as const;
 type PushPayload = {
   notification: { title: string; body: string };
@@ -18,13 +16,6 @@ type PushPayload = {
   };
   data: { roomId: string; path: string; eventType: string };
 };
-
-function asRoomRecord(value: unknown): RoomRecord {
-  if (!value || typeof value !== "object" || Array.isArray(value)) {
-    return {};
-  }
-  return value as RoomRecord;
-}
 
 function toNumber(value: unknown): number | null {
   return typeof value === "number" && Number.isFinite(value) ? value : null;
@@ -90,42 +81,6 @@ function basePayload(roomId: string, eventType: string, title: string, body = "\
   };
 }
 
-function buildNotificationPayloads(roomId: string, before: RoomRecord, after: RoomRecord): PushPayload[] {
-  const beforeLock = toNumber(before.state);
-  const afterLock = toNumber(after.state);
-  const beforeLight = toNumber(before.lightState);
-  const afterLight = toNumber(after.lightState);
-  const payloads: PushPayload[] = [];
-
-  if (beforeLock !== null && afterLock !== null && beforeLock !== afterLock) {
-    const title =
-      afterLock === 1
-        ? `${roomId}号室が施錠されました🔐`
-        : `${roomId}号室が解錠されました🔓`;
-    payloads.push(basePayload(roomId, "lock", title));
-  }
-
-  if (beforeLight !== null && afterLight !== null && beforeLight !== afterLight) {
-    const title =
-      afterLight === 1
-        ? `${roomId}号室の照明が点灯しました💡`
-        : `${roomId}号室の照明が消灯しました🌃`;
-    payloads.push(basePayload(roomId, "light", title));
-  }
-
-  for (const key of COMMENT_KEYS) {
-    const prev = commentText(before[key]);
-    const next = commentText(after[key]);
-    if (prev !== next && next.length > 0) {
-      payloads.push(
-        basePayload(roomId, "comment", `${roomId}号室にコメントが追加されました`, next),
-      );
-    }
-  }
-
-  return payloads;
-}
-
 function invalidTokensFromResponse(
   tokens: string[],
   response: BatchResponse,
@@ -176,27 +131,79 @@ async function sendNotifications(tokens: string[], payloads: PushPayload[], room
   });
 }
 
-export const notifyRoomUpdates = onValueUpdated(
+async function notify(roomId: string, payload: PushPayload): Promise<void> {
+  const tokens = await getPushTokens();
+  if (tokens.length === 0) {
+    logger.info("No push tokens to notify", { roomId });
+    return;
+  }
+  await sendNotifications(tokens, [payload], roomId);
+}
+
+export const notifyRoomLockUpdated = onValueUpdated(
   {
-    ref: "/room/{roomId}",
+    ref: "/room/{roomId}/state",
     region: "asia-southeast1",
   },
   async (event) => {
     const roomId = event.params.roomId as string;
-    const before = asRoomRecord(event.data.before.val());
-    const after = asRoomRecord(event.data.after.val());
-
-    const payloads = buildNotificationPayloads(roomId, before, after);
-    if (payloads.length === 0) {
+    const before = toNumber(event.data.before.val());
+    const after = toNumber(event.data.after.val());
+    if (before === null || after === null || before === after) {
       return;
     }
 
-    const tokens = await getPushTokens();
-    if (tokens.length === 0) {
-      logger.info("No push tokens to notify", { roomId });
-      return;
-    }
-
-    await sendNotifications(tokens, payloads, roomId);
+    const title =
+      after === 1
+        ? `${roomId}号室が施錠されました🔐`
+        : `${roomId}号室が解錠されました🔓`;
+    await notify(roomId, basePayload(roomId, "lock", title));
   },
 );
+
+export const notifyRoomLightUpdated = onValueUpdated(
+  {
+    ref: "/room/{roomId}/lightState",
+    region: "asia-southeast1",
+  },
+  async (event) => {
+    const roomId = event.params.roomId as string;
+    const before = toNumber(event.data.before.val());
+    const after = toNumber(event.data.after.val());
+    if (before === null || after === null || before === after) {
+      return;
+    }
+
+    const title =
+      after === 1
+        ? `${roomId}号室の照明が点灯しました💡`
+        : `${roomId}号室の照明が消灯しました🌃`;
+    await notify(roomId, basePayload(roomId, "light", title));
+  },
+);
+
+function makeCommentNotifier(commentKey: (typeof COMMENT_KEYS)[number]) {
+  return onValueUpdated(
+    {
+      ref: `/room/{roomId}/${commentKey}`,
+      region: "asia-southeast1",
+    },
+    async (event) => {
+      const roomId = event.params.roomId as string;
+      const prev = commentText(event.data.before.val());
+      const next = commentText(event.data.after.val());
+      if (prev === next || next.length === 0) {
+        return;
+      }
+
+      await notify(
+        roomId,
+        basePayload(roomId, "comment", `${roomId}号室にコメントが追加されました`, next),
+      );
+    },
+  );
+}
+
+export const notifyRoomComment1Updated = makeCommentNotifier("comment1");
+export const notifyRoomComment2Updated = makeCommentNotifier("comment2");
+export const notifyRoomComment3Updated = makeCommentNotifier("comment3");
